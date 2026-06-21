@@ -38,7 +38,7 @@ A fully functional interactive quiz application built with HTML, CSS, and JavaSc
 
 Click the link below to try the quiz:
 
-🔗 **[Live Quiz Application](https://darkfear2005or2006-ai.github.io/quiz-app-project/)**
+🔗 **[Live Quiz Application](https://darkfear2005or2006-ai.github.io/Quiz-App-Project/)**
 
 
 ---
