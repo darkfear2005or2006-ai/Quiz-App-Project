@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Application</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Basic Quiz Application</h1>
+            <div class="info">
+                <span>Question: <span id="question-number">1</span>/10</span>
+                <span>Score: <span id="score">0</span></span>
+            </div>
+        </header>
+
+       
+        <div class="progress-container">
+            <div id="progress-bar" style="width: 0%;"></div>
+        </div>
+
+        <main>
+          
+            <div id="timer-container">
+                ⏱️ Time left: <span id="timer">30</span> seconds
+            </div>
+
+           
+            <div id="quiz">
+                <div id="question">Question will appear here</div>
+                <div id="options"></div>
+                <button id="next-btn">Next Question</button>
+            </div>
+
+           
+            <div id="result" style="display:none;">
+                <h2>Quiz Complete!</h2>
+                <p>Your Score: <span id="final-score">0</span> out of 10</p>
+                <p>Percentage: <span id="percentage">0%</span></p>
+                <p id="performance-message"></p>
+                <p id="high-score-message"></p>
+                <button id="restart-btn">Restart Quiz</button>
+                
+               
+                <div id="review-section" style="display:none; margin-top: 20px;">
+                    <h3>Review Your Answers</h3>
+                    <div id="review-answers"></div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Malik Umar - F2024376083 Khizar Rehman - F2024376070 Sheikh M Taha Ahmed - F2024376165</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
