@@ -87,16 +87,11 @@ quiz-app-project/
 3. The quiz will open in your default browser
 
 ### Option 3: Clone from GitHub
-
-```bash
-git clone https://github.com/yourusername/quiz-app-project.git
-cd quiz-app-project
-open index.html
-
-
+1. git clone https://github.com/darkfear2005or2006-ai/quiz-app-project.git
+2. cd quiz-app-project
+3. open index.html
 
 ### How to Use
-
 Open the quiz link
 Read the question carefully
 Select one of the 4 options (A, B, C, or D)
@@ -145,7 +140,6 @@ GitHub Pages – Free hosting
 For any questions or feedback, feel free to reach out:
 
 Email: darkfear2005or2006@gmail.com
-
 GitHub: https://github.com/darkfear2005or2006-ai
 
 ### 📜 License
