@@ -1,5 +1,6 @@
+// =============================================
 // 1. QUESTION BANK (10 Questions)
-
+// =============================================
 const questions = [
     {
         question: "What does HTML stand for?",
@@ -103,9 +104,9 @@ const questions = [
     }
 ];
 
-
+// =============================================
 // 2. DOM REFERENCES
-
+// =============================================
 const questionElement = document.getElementById('question');
 const optionsElement = document.getElementById('options');
 const nextButton = document.getElementById('next-btn');
@@ -124,21 +125,22 @@ const timerContainer = document.getElementById('timer-container');
 const reviewSection = document.getElementById('review-section');
 const reviewContainer = document.getElementById('review-answers');
 
-
+// =============================================
 // 3. STATE VARIABLES
-
+// =============================================
 let currentQuestion = 0;
 let score = 0;
 let selectedOption = null;
 let answered = false;
 let userAnswers = [];
+let timerInterval = null;
 let timeLeft = 30;
-let questionsCopy = [];         
+let questionsCopy = [];
+let quizCompleted = false;
 
-
+// =============================================
 // 4. UTILITY FUNCTIONS
-
-// Shuffle an array (Fisher-Yates)
+// =============================================
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -147,14 +149,20 @@ function shuffleArray(array) {
     return array;
 }
 
-
+// =============================================
 // 5. LOAD QUESTION
-
+// =============================================
 function loadQuestion() {
-    // Shuffle questions only once at the start
+    // Shuffle questions only once
     if (currentQuestion === 0 && questionsCopy.length === 0) {
         questionsCopy = shuffleArray([...questions]);
         userAnswers = new Array(questionsCopy.length).fill(undefined);
+    }
+
+    // Check if quiz is complete
+    if (currentQuestion >= questionsCopy.length) {
+        showResults();
+        return;
     }
 
     const q = questionsCopy[currentQuestion];
@@ -168,7 +176,7 @@ function loadQuestion() {
     // Clear old options
     optionsElement.innerHTML = '';
 
-    // Create shuffled options (randomize order)
+    // Shuffle options
     const optionIndices = [0, 1, 2, 3];
     shuffleArray(optionIndices);
     const optionLabels = ['A', 'B', 'C', 'D'];
@@ -177,12 +185,12 @@ function loadQuestion() {
         const button = document.createElement('button');
         button.classList.add('option-btn');
         button.textContent = optionLabels[displayIndex] + '. ' + q.options[origIndex];
-        button.dataset.index = origIndex;   // store the real index (correct answer)
+        button.dataset.index = origIndex;
         button.addEventListener('click', selectOption);
         optionsElement.appendChild(button);
     });
 
-    // Reset state for this question
+    // Reset state
     selectedOption = null;
     answered = false;
     nextButton.disabled = true;
@@ -192,9 +200,9 @@ function loadQuestion() {
     startTimer();
 }
 
-
-// 6. TIMER
-
+// =============================================
+// 6. TIMER (FIXED)
+// =============================================
 function startTimer() {
     // Clear any previous timer
     if (timerInterval) {
@@ -202,30 +210,41 @@ function startTimer() {
     }
     
     timeLeft = 30;
-    timerElement.textContent = timeLeft;
-    timerElement.classList.remove('warning');
+    const timerSpan = document.getElementById('timer');
+    if (timerSpan) {
+        timerSpan.textContent = timeLeft;
+        timerSpan.classList.remove('warning');
+    }
     timerContainer.innerHTML = '⏱️ Time left: <span id="timer">30</span> seconds';
 
     timerInterval = setInterval(function() {
         timeLeft--;
-        timerElement.textContent = timeLeft;
-
-        if (timeLeft <= 5) {
-            timerElement.classList.add('warning');
+        const timerSpan = document.getElementById('timer');
+        if (timerSpan) {
+            timerSpan.textContent = timeLeft;
+            if (timeLeft <= 5) {
+                timerSpan.classList.add('warning');
+            }
         }
 
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
-            // Auto-fail if not answered
-            if (!answered) {
+            if (!answered && !quizCompleted) {
                 autoFailQuestion();
             }
         }
     }, 1000);
 }
 
-// Auto-fail when time runs out
+// =============================================
+// 7. AUTO-FAIL (FIXED)
+// =============================================
 function autoFailQuestion() {
+    if (answered || quizCompleted) return;
+    
+    // Store as not answered
+    userAnswers[currentQuestion] = -1;
+    
     // Disable all options
     document.querySelectorAll('.option-btn').forEach(btn => {
         btn.classList.add('disabled');
@@ -234,13 +253,10 @@ function autoFailQuestion() {
     // Show correct answer
     const q = questionsCopy[currentQuestion];
     document.querySelectorAll('.option-btn').forEach((btn, index) => {
-        if (index === q.answer) {
+        if (parseInt(btn.dataset.index) === q.answer) {
             btn.classList.add('correct');
         }
     });
-
-    // Store as wrong answer (user didn't select)
-    userAnswers[currentQuestion] = -1; // -1 means not answered
 
     timerContainer.innerHTML = '⏰ Time ran out! <span style="color:#dc3545;">Moving to next...</span>';
     answered = true;
@@ -248,17 +264,17 @@ function autoFailQuestion() {
     nextButton.style.opacity = '1';
 }
 
-
-// 7. OPTION SELECTION
-
+// =============================================
+// 8. OPTION SELECTION
+// =============================================
 function selectOption(event) {
-    if (answered) return;
+    if (answered || quizCompleted) return;
 
     const button = event.target;
     const selectedIndex = parseInt(button.dataset.index);
     const q = questionsCopy[currentQuestion];
 
-    // Store the user's answer
+    // Store user's answer
     userAnswers[currentQuestion] = selectedIndex;
 
     // Disable all options
@@ -273,9 +289,8 @@ function selectOption(event) {
         scoreElement.textContent = score;
     } else {
         button.classList.add('wrong');
-        // Show the correct answer
-        document.querySelectorAll('.option-btn').forEach((btn, index) => {
-            if (index === q.answer) {
+        document.querySelectorAll('.option-btn').forEach((btn) => {
+            if (parseInt(btn.dataset.index) === q.answer) {
                 btn.classList.add('correct');
             }
         });
@@ -286,18 +301,20 @@ function selectOption(event) {
     nextButton.disabled = false;
     nextButton.style.opacity = '1';
 
-    // Stop timer (we have answer)
-    clearInterval(timerInterval);
+    // Stop timer
+    if (timerInterval) {
+        clearInterval(timerInterval);
+    }
 }
 
-
-// 8. NEXT BUTTON
-
+// =============================================
+// 9. NEXT BUTTON (FIXED)
+// =============================================
 nextButton.addEventListener('click', function() {
-    if (!answered) return;
+    if (!answered || quizCompleted) return;
 
     currentQuestion++;
-
+    
     if (currentQuestion < questionsCopy.length) {
         loadQuestion();
         this.disabled = true;
@@ -307,10 +324,12 @@ nextButton.addEventListener('click', function() {
     }
 });
 
-
-// 9. SHOW RESULTS
-
+// =============================================
+// 10. SHOW RESULTS (FIXED)
+// =============================================
 function showResults() {
+    quizCompleted = true;
+    
     // Clear timer
     if (timerInterval) {
         clearInterval(timerInterval);
@@ -345,24 +364,24 @@ function showResults() {
     performanceMessageElement.textContent = message;
     performanceMessageElement.style.color = color;
 
-    // High score (localStorage)
+    // High score
     const savedHighScore = localStorage.getItem('quizHighScore');
     let highScore = savedHighScore ? parseInt(savedHighScore) : 0;
     if (score > highScore) {
         highScore = score;
         localStorage.setItem('quizHighScore', highScore);
-        highScoreMessageElement.innerHTML = '🏆 New High Score!';
+        highScoreMessageElement.innerHTML = '🏆 New High Score! (' + highScore + '/' + total + ')';
     } else {
         highScoreMessageElement.innerHTML = '🏆 Best Score: ' + highScore + ' / ' + total;
     }
 
-    // Show review of answers
+    // Show review
     showReview();
 }
 
-
-// 10. REVIEW ANSWERS
-
+// =============================================
+// 11. REVIEW ANSWERS (FIXED)
+// =============================================
 function showReview() {
     reviewSection.style.display = 'block';
     reviewContainer.innerHTML = '';
@@ -371,6 +390,7 @@ function showReview() {
         const userAns = userAnswers[index];
         let isCorrect = false;
         let userAnswerText = 'Not answered';
+        
         if (userAns !== undefined && userAns !== -1) {
             userAnswerText = q.options[userAns];
             isCorrect = (userAns === q.answer);
@@ -385,16 +405,16 @@ function showReview() {
             <div class="q-text">Q${index+1}: ${q.question}</div>
             <div class="your-answer">
                 Your answer: <span class="${isCorrect ? 'correct-text' : 'wrong-text'}">${userAnswerText}</span>
-                ${!isCorrect ? `<br>Correct answer: <span style="color:#28a745;">${q.options[q.answer]}</span>` : ''}
+                ${!isCorrect ? `<br>✅ Correct answer: <span style="color:#28a745;">${q.options[q.answer]}</span>` : ''}
             </div>
         `;
         reviewContainer.appendChild(div);
     });
 }
 
-
-// 11. RESTART QUIZ
-
+// =============================================
+// 12. RESTART QUIZ (FIXED)
+// =============================================
 restartButton.addEventListener('click', function() {
     // Reset all state
     currentQuestion = 0;
@@ -402,23 +422,28 @@ restartButton.addEventListener('click', function() {
     answered = false;
     userAnswers = [];
     questionsCopy = [];
+    quizCompleted = false;
     scoreElement.textContent = score;
+    
+    // Reset UI
     quizElement.style.display = 'block';
     resultElement.style.display = 'none';
     reviewSection.style.display = 'none';
     progressBar.style.width = '0%';
-    timerContainer.innerHTML = '⏱️ Time left: <span id="timer">30</span> seconds';
-    // Clear any timer
+    
+    // Reset timer
     if (timerInterval) {
         clearInterval(timerInterval);
     }
+    timerContainer.innerHTML = '⏱️ Time left: <span id="timer">30</span> seconds';
+    
     // Load first question
     loadQuestion();
     nextButton.disabled = true;
     nextButton.style.opacity = '0.5';
 });
 
-
-// 12. START THE QUIZ
-
+// =============================================
+// 13. START THE QUIZ
+// =============================================
 loadQuestion();
