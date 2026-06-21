@@ -87,6 +87,7 @@ quiz-app-project/
 3. The quiz will open in your default browser
 
 ### Option 3: Clone from GitHub
+
 ```bash
 git clone https://github.com/yourusername/quiz-app-project.git
 cd quiz-app-project
@@ -95,32 +96,20 @@ open index.html
 
 
 ### How to Use
+
 Open the quiz link
-
 Read the question carefully
-
 Select one of the 4 options (A, B, C, or D)
-
 You will get immediate feedback:
-
 ✅ Green = Correct answer
-
 ❌ Red = Wrong answer (correct answer will be shown)
-
 Click "Next Question" to proceed
-
 You have 30 seconds per question (timer turns red at 5 seconds)
-
 At the end, see your:
-
 Final score
-
 Percentage
-
 Performance message
-
 High score
-
 All answers with correct answers
 
 🎯 Future Improvements
