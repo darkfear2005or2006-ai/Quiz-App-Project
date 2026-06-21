@@ -92,7 +92,9 @@ git clone https://github.com/yourusername/quiz-app-project.git
 cd quiz-app-project
 open index.html
 
-📋 How to Play
+
+
+### How to Use
 Open the quiz link
 
 Read the question carefully
@@ -136,10 +138,10 @@ Add user login and profile
 
 Add progress tracking across sessions
 
-🐛 Known Issues
+### 🐛 Known Issues
 No known issues. All features are working as expected.
 
-👨‍💻 Acknowledgments
+### 👨‍💻 Acknowledgments
 University of Management & Technology – Course guidance
 
 M. Shehan Latif – Instructor support and guidance
@@ -150,12 +152,12 @@ W3Schools – HTML and CSS references
 
 GitHub Pages – Free hosting
 
-📧 Contact
+### 📧 Contact
 For any questions or feedback, feel free to reach out:
 
 Email: darkfear2005or2006@gmail.com
 
 GitHub: https://github.com/darkfear2005or2006-ai
 
-📜 License
+### 📜 License
 This project is submitted as part of the Web Technologies (IT-291) course at University of Management & Technology, Spring Semester 2026.
