@@ -87,12 +87,9 @@ quiz-app-project/
 3. The quiz will open in your default browser
 
 ### Option 3: Clone from GitHub
-
-```bash
-git clone https://github.com/yourusername/quiz-app-project.git
-cd quiz-app-project
-open index.html
-
+1. git clone https://github.com/yourusername/quiz-app-project.git
+2. cd quiz-app-project
+3. open index.html
 
 
 ### How to Use
@@ -112,7 +109,7 @@ Performance message
 High score
 All answers with correct answers
 
-🎯 Future Improvements
+### 🎯 Future Improvements
 Add more questions (50+)
 
 Add difficulty levels (Easy, Medium, Hard)
